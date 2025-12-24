@@ -91,12 +91,13 @@ export default function Home() {
   const y1 = useTransform(scrollY, [0, 500], [0, 200]);
   const opacity = useTransform(scrollY, [0, 300], [1, 0]);
   
-  // Hero Background Carousel
+  // Hero Background Carousel - Airport & Aviation Scenes
   const heroImages = [
     "https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?auto=format&fit=crop&q=80&w=2000",
-    "https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?auto=format&fit=crop&q=80&w=2000",
+    "https://images.unsplash.com/photo-1513573516-f1adf8f2f69e?auto=format&fit=crop&q=80&w=2000",
+    "https://images.unsplash.com/photo-1446776877081-d282a0f896e2?auto=format&fit=crop&q=80&w=2000",
     "https://images.unsplash.com/photo-1569163139394-de4798aa62b5?auto=format&fit=crop&q=80&w=2000",
-    "https://images.unsplash.com/photo-1517427537411-fb1a0d3a0f0b?auto=format&fit=crop&q=80&w=2000",
+    "https://images.unsplash.com/photo-1485633308149-3903a40df9f3?auto=format&fit=crop&q=80&w=2000",
   ];
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -271,28 +272,28 @@ export default function Home() {
                 description="Comprehensive ground classes and flying training to earn your Commercial Pilot License with DGCA standards."
                 icon="pilot"
                 delay={0.1}
-                image="https://images.unsplash.com/photo-1583454110551-21a0ba33c784?auto=format&fit=crop&q=80&w=800"
+                image="https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?auto=format&fit=crop&q=80&w=800"
               />
               <ServiceCard 
                 title="BBA Aviation / Airport Management" 
                 description="A 3-year degree program combining management principles with specialized aviation industry knowledge."
                 icon="degree"
                 delay={0.2}
-                image="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=800"
+                image="https://images.unsplash.com/photo-1513573516-f1adf8f2f69e?auto=format&fit=crop&q=80&w=800"
               />
               <ServiceCard 
                 title="Aircraft Maintenance Engineering (AME)" 
                 description="Become a licensed Aircraft Maintenance Engineer. Learn to service and repair aircraft systems."
                 icon="engineer"
                 delay={0.3}
-                image="https://images.unsplash.com/photo-1559107469-e0b9d1d2ed86?auto=format&fit=crop&q=80&w=800"
+                image="https://images.unsplash.com/photo-1485633308149-3903a40df9f3?auto=format&fit=crop&q=80&w=800"
               />
               <ServiceCard 
                 title="B.E Aeronautical Engineering" 
                 description="Deep dive into the design, manufacturing, and testing of aircraft and aerospace systems."
                 icon="engineer"
                 delay={0.4}
-                image="https://images.unsplash.com/photo-1517427537411-fb1a0d3a0f0b?auto=format&fit=crop&q=80&w=800"
+                image="https://images.unsplash.com/photo-1446776877081-d282a0f896e2?auto=format&fit=crop&q=80&w=800"
               />
             </div>
           </div>
