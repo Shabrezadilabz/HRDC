@@ -34,16 +34,18 @@ export function Navbar() {
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
         {/* Logo Area */}
-        <Link href="/" className="flex items-center gap-2 group cursor-pointer">
-          <div className="bg-gradient-to-br from-primary to-yellow-600 p-2 rounded-lg group-hover:shadow-[0_0_20px_rgba(212,175,55,0.5)] transition-shadow duration-300">
-            <Plane className="w-6 h-6 text-primary-foreground transform group-hover:-rotate-45 transition-transform duration-500" />
-          </div>
+        <Link href="/" className="flex items-center gap-3 group cursor-pointer">
+          <img 
+            src="/assets/logo-seal.jpg" 
+            alt="HR Aviation Research & Developments" 
+            className="h-12 w-12 rounded-full object-cover group-hover:shadow-[0_0_20px_rgba(212,175,55,0.5)] transition-shadow duration-300"
+          />
           <div className="flex flex-col">
-            <span className="font-display font-bold text-xl tracking-tight leading-none text-white">
-              AVIATION
+            <span className="font-display font-bold text-sm tracking-tight leading-none text-white">
+              HR AVIATION
             </span>
-            <span className="font-body text-xs text-primary tracking-[0.2em] font-medium">
-              ACADEMY
+            <span className="font-body text-xs text-primary tracking-[0.1em] font-medium">
+              RESEARCH & DEV
             </span>
           </div>
         </Link>

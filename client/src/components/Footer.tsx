@@ -8,16 +8,18 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 mb-4">
-              <div className="bg-primary p-1.5 rounded-md">
-                <Plane className="w-5 h-5 text-primary-foreground transform -rotate-45" />
-              </div>
+              <img 
+                src="/assets/logo-seal.jpg" 
+                alt="HR Aviation Research & Developments" 
+                className="h-10 w-10 rounded-full object-cover"
+              />
               <div className="flex flex-col">
-                <span className="font-display font-bold text-lg text-white">AVIATION</span>
-                <span className="font-body text-[10px] text-primary tracking-[0.2em] font-medium">ACADEMY</span>
+                <span className="font-display font-bold text-lg text-white">HR AVIATION</span>
+                <span className="font-body text-[10px] text-primary tracking-[0.1em] font-medium">RESEARCH & DEV</span>
               </div>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              Empowering the next generation of aviation professionals with world-class training and global opportunities.
+              Global aviation research & development company providing expert career counseling, admission guidance, institutional promotion & local guardian services around the globe.
             </p>
             <div className="flex gap-4 pt-2">
               {[Facebook, Instagram, Twitter, Linkedin].map((Icon, i) => (
@@ -63,23 +65,23 @@ export function Footer() {
             <h4 className="font-display font-bold text-white mb-6">Contact Us</h4>
             <ul className="space-y-4 text-sm text-muted-foreground">
               <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-primary shrink-0" />
-                <span>123 Aviation Drive, Aero City,<br />Hyderabad, Telangana 500081</span>
+                <MapPin className="w-5 h-5 text-primary shrink-0 pt-0.5" />
+                <span>Bindunagar, Seva Mandir,<br />Parigi (M), Sri Sathya Sai Dist,<br />A.P. – 515212</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-primary shrink-0" />
-                <span>+91 98765 43210</span>
+                <span>+91 9182272317 / 8885158042</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-primary shrink-0" />
-                <span>admissions@aviation.edu</span>
+                <span>info@aviationresearch.in</span>
               </li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
-          <p>© 2024 Aviation Academy. All rights reserved.</p>
+          <p>© 2024 HR Aviation Research & Developments Pvt. Ltd. All rights reserved. ESTD 2024</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-white">Privacy Policy</a>
             <a href="#" className="hover:text-white">Terms of Service</a>

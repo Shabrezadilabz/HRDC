@@ -196,47 +196,119 @@ export default function Home() {
             <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-4">Academic Hub</h2>
             <div className="w-20 h-1 bg-primary mx-auto rounded-full mb-6" />
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Comprehensive courses designed by industry experts to launch your career in the skies.
+              Comprehensive courses designed by industry experts to launch your career in aviation and beyond.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <ServiceCard 
-              title="Commercial Pilot (CPL)" 
-              description="Comprehensive ground classes and flying training to earn your Commercial Pilot License with DGCA standards."
-              icon="pilot"
-              delay={0.1}
-            />
-            <ServiceCard 
-              title="BBA Aviation" 
-              description="A 3-year degree program combining management principles with specialized aviation industry knowledge."
-              icon="degree"
-              delay={0.2}
-            />
-            <ServiceCard 
-              title="Aircraft Maintenance" 
-              description="Become a licensed Aircraft Maintenance Engineer (AME). Learn to service and repair aircraft systems."
-              icon="engineer"
-              delay={0.3}
-            />
-            <ServiceCard 
-              title="Aeronautical Engineering" 
-              description="Deep dive into the design, manufacturing, and testing of aircraft and spacecraft systems."
-              icon="engineer"
-              delay={0.4}
-            />
-            <ServiceCard 
-              title="MBBS Abroad" 
-              description="Specialized guidance for medical aspirants looking to study in top universities worldwide."
-              icon="medical"
-              delay={0.5}
-            />
-            <ServiceCard 
-              title="Study Abroad" 
-              description="Visa counseling and admission assistance for USA, UK, Canada, Australia, and Germany."
-              icon="global"
-              delay={0.6}
-            />
+          {/* Aviation Core Courses */}
+          <div className="mb-12">
+            <h3 className="text-2xl font-display font-bold text-white mb-8">
+              <span className="text-primary">Aviation Core Programs</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <ServiceCard 
+                title="Commercial Pilot (CPL)" 
+                description="Comprehensive ground classes and flying training to earn your Commercial Pilot License with DGCA standards."
+                icon="pilot"
+                delay={0.1}
+              />
+              <ServiceCard 
+                title="BBA Aviation / Airport Management" 
+                description="A 3-year degree program combining management principles with specialized aviation industry knowledge."
+                icon="degree"
+                delay={0.2}
+              />
+              <ServiceCard 
+                title="Aircraft Maintenance Engineering (AME)" 
+                description="Become a licensed Aircraft Maintenance Engineer. Learn to service and repair aircraft systems."
+                icon="engineer"
+                delay={0.3}
+              />
+              <ServiceCard 
+                title="B.E Aeronautical Engineering" 
+                description="Deep dive into the design, manufacturing, and testing of aircraft and aerospace systems."
+                icon="engineer"
+                delay={0.4}
+              />
+            </div>
+          </div>
+
+          {/* Engineering Programs */}
+          <div className="mb-12">
+            <h3 className="text-2xl font-display font-bold text-white mb-8">
+              <span className="text-primary">B.Tech Engineering Programs</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <ServiceCard 
+                title="CSE (Computer Science)" 
+                description="Master software development, AI, and emerging technologies shaping the aviation industry."
+                icon="degree"
+                delay={0.1}
+              />
+              <ServiceCard 
+                title="ECE (Electronics & Communication)" 
+                description="Specialize in avionics, communication systems, and electronic aircraft components."
+                icon="engineer"
+                delay={0.2}
+              />
+              <ServiceCard 
+                title="EEE (Electrical Engineering)" 
+                description="Learn power systems and electrical components critical to modern aircraft operations."
+                icon="engineer"
+                delay={0.3}
+              />
+              <ServiceCard 
+                title="Civil Engineering" 
+                description="Build expertise in airport infrastructure, runway design, and aviation facilities."
+                icon="degree"
+                delay={0.4}
+              />
+              <ServiceCard 
+                title="Mechanical Engineering" 
+                description="Understand mechanical systems essential for aircraft propulsion and structural integrity."
+                icon="engineer"
+                delay={0.5}
+              />
+              <ServiceCard 
+                title="AI & Robotics" 
+                description="Cutting-edge programs in artificial intelligence and automation for aerospace applications."
+                icon="degree"
+                delay={0.6}
+              />
+              <ServiceCard 
+                title="Data Science" 
+                description="Analytics and data-driven solutions for aviation operations and management."
+                icon="degree"
+                delay={0.7}
+              />
+            </div>
+          </div>
+
+          {/* Medical & Allied */}
+          <div>
+            <h3 className="text-2xl font-display font-bold text-white mb-8">
+              <span className="text-primary">Medical & Global Education</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <ServiceCard 
+                title="MBBS Abroad" 
+                description="Specialized guidance for medical aspirants to study MBBS in top universities worldwide with visa support."
+                icon="medical"
+                delay={0.1}
+              />
+              <ServiceCard 
+                title="Study Abroad Services" 
+                description="Complete guidance for USA, UK, Canada, Australia, Germany, and Russia with visa and admission support."
+                icon="global"
+                delay={0.2}
+              />
+              <ServiceCard 
+                title="Internships & OJT" 
+                description="On-the-job training and internship programs with leading aviation companies nationally and internationally."
+                icon="degree"
+                delay={0.3}
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -363,11 +435,23 @@ export default function Home() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="CPL">Commercial Pilot Training</SelectItem>
-                            <SelectItem value="BBA">BBA Aviation</SelectItem>
-                            <SelectItem value="AME">Aircraft Maintenance</SelectItem>
-                            <SelectItem value="Eng">Aeronautical Engineering</SelectItem>
-                            <SelectItem value="StudyAbroad">Study Abroad</SelectItem>
+                            <SelectItem value="CPL">Commercial Pilot Training (CPL)</SelectItem>
+                            <SelectItem value="BBA">BBA Aviation / Airport Management</SelectItem>
+                            <SelectItem value="AME">Aircraft Maintenance Engineering</SelectItem>
+                            <SelectItem value="Aero">B.E Aeronautical Engineering</SelectItem>
+                            <SelectItem value="CSE">B.Tech CSE</SelectItem>
+                            <SelectItem value="ECE">B.Tech ECE</SelectItem>
+                            <SelectItem value="EEE">B.Tech EEE</SelectItem>
+                            <SelectItem value="Civil">B.Tech Civil</SelectItem>
+                            <SelectItem value="Mech">B.Tech Mechanical</SelectItem>
+                            <SelectItem value="AI">B.Tech AI & Robotics</SelectItem>
+                            <SelectItem value="DS">B.Tech Data Science</SelectItem>
+                            <SelectItem value="MBBS">MBBS Abroad</SelectItem>
+                            <SelectItem value="StudyAbroad">Study Abroad Services</SelectItem>
+                            <SelectItem value="OJT">Internships & OJT Programs</SelectItem>
+                            <SelectItem value="Career">Career Counselling</SelectItem>
+                            <SelectItem value="Visa">Visa & Passport Assistance</SelectItem>
+                            <SelectItem value="HR">HR Recruitment Services</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -406,9 +490,16 @@ export default function Home() {
       <Footer />
       
       {/* Mobile Sticky Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background/90 backdrop-blur-lg border-t border-white/10 p-3 z-50 flex justify-between gap-2">
-        <Button className="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs h-10">WhatsApp</Button>
-        <Button className="flex-1 bg-primary hover:bg-yellow-500 text-primary-foreground text-xs h-10">Call Now</Button>
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-lg border-t border-white/10 p-2 z-50 flex justify-between gap-1.5">
+        <a href="https://wa.me/919182272317" className="flex-1">
+          <Button className="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs h-10 rounded-md">WhatsApp</Button>
+        </a>
+        <a href="tel:+919182272317" className="flex-1">
+          <Button className="flex-1 bg-primary hover:bg-yellow-500 text-primary-foreground text-xs h-10 rounded-md">Call: 9182272317</Button>
+        </a>
+        <a href="mailto:info@aviationresearch.in" className="flex-1">
+          <Button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs h-10 rounded-md">Email</Button>
+        </a>
       </div>
     </div>
   );
