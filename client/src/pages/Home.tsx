@@ -14,22 +14,63 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
 
-// Countdown Timer Component
-const CountdownTimer = () => (
-  <div className="flex gap-4 text-white text-center">
-    {[
-      { val: "04", label: "Days" },
-      { val: "12", label: "Hours" },
-      { val: "45", label: "Mins" },
-    ].map((item, i) => (
-      <div key={i} className="bg-black/40 backdrop-blur-sm border border-primary/30 rounded-lg p-3 min-w-[70px]">
-        <div className="text-2xl font-bold font-mono text-primary">{item.val}</div>
-        <div className="text-[10px] uppercase tracking-wider opacity-70">{item.label}</div>
-      </div>
-    ))}
-  </div>
-);
+// Dynamic Countdown Timer Component
+const CountdownTimer = () => {
+  const [time, setTime] = useState({
+    days: 4,
+    hours: 12,
+    mins: 45,
+    secs: 0,
+  });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime((prevTime) => {
+        let { days, hours, mins, secs } = prevTime;
+        
+        if (secs > 0) {
+          secs--;
+        } else if (mins > 0) {
+          mins--;
+          secs = 59;
+        } else if (hours > 0) {
+          hours--;
+          mins = 59;
+          secs = 59;
+        } else if (days > 0) {
+          days--;
+          hours = 23;
+          mins = 59;
+          secs = 59;
+        }
+        
+        return { days, hours, mins, secs };
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const padZero = (num: number) => String(num).padStart(2, '0');
+
+  return (
+    <div className="flex gap-4 text-white text-center">
+      {[
+        { val: padZero(time.days), label: "Days" },
+        { val: padZero(time.hours), label: "Hours" },
+        { val: padZero(time.mins), label: "Mins" },
+        { val: padZero(time.secs), label: "Secs" },
+      ].map((item, i) => (
+        <div key={i} className="bg-black/40 backdrop-blur-sm border border-primary/30 rounded-lg p-3 min-w-[70px]">
+          <div className="text-2xl font-bold font-mono text-primary">{item.val}</div>
+          <div className="text-[10px] uppercase tracking-wider opacity-70">{item.label}</div>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 // Marquee Component
 const Marquee = () => (
@@ -49,6 +90,22 @@ export default function Home() {
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 500], [0, 200]);
   const opacity = useTransform(scrollY, [0, 300], [1, 0]);
+  
+  // Hero Background Carousel
+  const heroImages = [
+    "https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?auto=format&fit=crop&q=80&w=2000",
+    "https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?auto=format&fit=crop&q=80&w=2000",
+    "https://images.unsplash.com/photo-1569163139394-de4798aa62b5?auto=format&fit=crop&q=80&w=2000",
+    "https://images.unsplash.com/photo-1517427537411-fb1a0d3a0f0b?auto=format&fit=crop&q=80&w=2000",
+  ];
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [heroImages.length]);
 
   // Enquiry Form Logic
   const enquiryMutation = useCreateEnquiry();
@@ -75,15 +132,18 @@ export default function Home() {
       
       {/* HERO SECTION */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        {/* Parallax Background */}
+        {/* Rotating Parallax Background */}
         <motion.div 
           style={{ y: y1 }}
           className="absolute inset-0 z-0"
+          key={currentImageIndex}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-slate-900/60 via-slate-900/40 to-background z-10" />
-          {/* Using Unsplash image for Hero - Plane in sky */}
           <img 
-            src="https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?auto=format&fit=crop&q=80&w=2000" 
+            src={heroImages[currentImageIndex]} 
             alt="Hero Background" 
             className="w-full h-full object-cover"
           />
@@ -211,24 +271,28 @@ export default function Home() {
                 description="Comprehensive ground classes and flying training to earn your Commercial Pilot License with DGCA standards."
                 icon="pilot"
                 delay={0.1}
+                image="https://images.unsplash.com/photo-1583454110551-21a0ba33c784?auto=format&fit=crop&q=80&w=800"
               />
               <ServiceCard 
                 title="BBA Aviation / Airport Management" 
                 description="A 3-year degree program combining management principles with specialized aviation industry knowledge."
                 icon="degree"
                 delay={0.2}
+                image="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=800"
               />
               <ServiceCard 
                 title="Aircraft Maintenance Engineering (AME)" 
                 description="Become a licensed Aircraft Maintenance Engineer. Learn to service and repair aircraft systems."
                 icon="engineer"
                 delay={0.3}
+                image="https://images.unsplash.com/photo-1559107469-e0b9d1d2ed86?auto=format&fit=crop&q=80&w=800"
               />
               <ServiceCard 
                 title="B.E Aeronautical Engineering" 
                 description="Deep dive into the design, manufacturing, and testing of aircraft and aerospace systems."
                 icon="engineer"
                 delay={0.4}
+                image="https://images.unsplash.com/photo-1517427537411-fb1a0d3a0f0b?auto=format&fit=crop&q=80&w=800"
               />
             </div>
           </div>
