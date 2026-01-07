@@ -5,13 +5,11 @@ import express, { type Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
-import { createServer } from "http";
 import { connectToDatabase } from "./db";
 import path from "path";
 import fs from "fs";
 
 const app = express();
-const httpServer = createServer(app);
 
 declare module "http" {
   interface IncomingMessage {
@@ -80,18 +78,24 @@ app.use((req, res, next) => {
   next();
 });
 
-(async () => {
+// Database initialization and route setup
+let dbConnected = false;
+
+async function initializeApp() {
+  if (dbConnected) return;
+  
   try {
-    // Connect to MongoDB FIRST before registering routes
     console.log("🔄 Connecting to MongoDB...");
     const maskedUri = process.env.MONGODB_URI!.replace(/:[^:@]+@/, ":****@");
     console.log("📍 Connection:", maskedUri);
     await connectToDatabase();
-    
-    // Test route to verify server is working (must be before Vite catch-all)
+    console.log("✅ MongoDB connected");
+    dbConnected = true;
+
+    // Test route
     app.get("/test", (req, res) => {
-      res.json({ 
-        message: "Server is working!", 
+      res.json({
+        message: "Server is working!",
         timestamp: new Date().toISOString(),
         routes: {
           test: "/test",
@@ -101,19 +105,17 @@ app.use((req, res, next) => {
       });
     });
 
-    // Now register routes (which may query the database)
-    await registerRoutes(httpServer, app);
+    // Register API routes
+    await registerRoutes(null as any, app);
     console.log("✅ API routes registered");
 
-    // importantly only setup vite in development and after
-    // setting up all the other routes so the catch-all route
-    // doesn't interfere with the other routes
+    // Serve static files in production
     if (process.env.NODE_ENV === "production") {
       serveStatic(app);
     } else {
       console.log("🔄 Setting up Vite dev server for frontend...");
       const { setupVite } = await import("./vite");
-      await setupVite(httpServer, app);
+      await setupVite(null as any, app);
       console.log("✅ Vite dev server configured");
     }
 
@@ -126,14 +128,32 @@ app.use((req, res, next) => {
       res.status(status).json({ message });
     });
 
-    // ALWAYS serve the app on the port specified in the environment variable PORT
-    // Other ports are firewalled. Default to 5000 if not specified.
-    // this serves both the API and the client.
-    // It is the only port that is not firewalled.
+  } catch (error) {
+    console.error("❌ Failed to initialize app:", error);
+    throw error;
+  }
+}
+
+// For Vercel serverless
+if (process.env.VERCEL) {
+  console.log("🚀 Running in Vercel serverless mode");
+  // Initialize on first request
+  app.use(async (req, res, next) => {
+    if (!dbConnected) {
+      await initializeApp();
+    }
+    next();
+  });
+}
+
+// For local development
+if (!process.env.VERCEL && process.env.NODE_ENV !== "test") {
+  const { createServer } = await import("http");
+  const httpServer = createServer(app);
+  
+  initializeApp().then(() => {
     const port = parseInt(process.env.PORT || "5000", 10);
-    
-    // Start server
-    httpServer.listen(port, "0.0.0.0", () => {
+    httpServer.listen(port, () => {
       console.log("");
       console.log("=".repeat(50));
       console.log("✅ SERVER STARTED SUCCESSFULLY!");
@@ -143,19 +163,12 @@ app.use((req, res, next) => {
       console.log(`🧪 Test:     http://localhost:${port}/test`);
       console.log("=".repeat(50));
       console.log("");
-      
-      // Verify routes are registered
-      console.log("📋 Registered routes:");
-      console.log("   GET  /test");
-      console.log("   GET  /api/scholarship-registrations");
-      console.log("   POST /api/scholarship-registrations");
-      console.log("   GET  /api/enquiries");
-      console.log("   POST /api/enquiries");
-      console.log("   GET  /* (Vite catch-all for frontend)");
-      console.log("");
     });
-  } catch (error) {
+  }).catch((error) => {
     console.error("❌ Failed to start server:", error);
     process.exit(1);
-  }
-})();
+  });
+}
+
+// Export for Vercel
+export default app;
