@@ -148,25 +148,26 @@ if (process.env.VERCEL) {
 
 // For local development
 if (!process.env.VERCEL && process.env.NODE_ENV !== "test") {
-  const { createServer } = await import("http");
-  const httpServer = createServer(app);
-  
-  initializeApp().then(() => {
-    const port = parseInt(process.env.PORT || "5000", 10);
-    httpServer.listen(port, () => {
-      console.log("");
-      console.log("=".repeat(50));
-      console.log("✅ SERVER STARTED SUCCESSFULLY!");
-      console.log("=".repeat(50));
-      console.log(`🌐 Frontend: http://localhost:${port}`);
-      console.log(`🔌 API:      http://localhost:${port}/api`);
-      console.log(`🧪 Test:     http://localhost:${port}/test`);
-      console.log("=".repeat(50));
-      console.log("");
+  import("http").then(({ createServer }) => {
+    const httpServer = createServer(app);
+    
+    initializeApp().then(() => {
+      const port = parseInt(process.env.PORT || "5000", 10);
+      httpServer.listen(port, () => {
+        console.log("");
+        console.log("=".repeat(50));
+        console.log("✅ SERVER STARTED SUCCESSFULLY!");
+        console.log("=".repeat(50));
+        console.log(`🌐 Frontend: http://localhost:${port}`);
+        console.log(`🔌 API:      http://localhost:${port}/api`);
+        console.log(`🧪 Test:     http://localhost:${port}/test`);
+        console.log("=".repeat(50));
+        console.log("");
+      });
+    }).catch((error) => {
+      console.error("❌ Failed to start server:", error);
+      process.exit(1);
     });
-  }).catch((error) => {
-    console.error("❌ Failed to start server:", error);
-    process.exit(1);
   });
 }
 
