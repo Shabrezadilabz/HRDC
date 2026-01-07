@@ -1,6 +1,40 @@
-node_modules
-dist
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables (IMPORTANT!)
+.env
+.env.local
+.env.production
+
+# Build output
+dist/
+build/
+.cache/
+
+# Local state
+.local/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
 .DS_Store
-server/public
-vite.config.ts.*
-*.tar.gz
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+logs/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Temporary files
+*.tmp
+.temp/
