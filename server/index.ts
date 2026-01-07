@@ -5,11 +5,13 @@ import express, { type Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
+import { createServer } from "http";
 import { connectToDatabase } from "./db";
 import path from "path";
 import fs from "fs";
 
 const app = express();
+const httpServer = createServer(app);
 
 declare module "http" {
   interface IncomingMessage {
@@ -78,44 +80,41 @@ app.use((req, res, next) => {
   next();
 });
 
-// Database initialization and route setup
-let dbConnected = false;
-
-async function initializeApp() {
-  if (dbConnected) return;
-  
+(async () => {
   try {
+    // Connect to MongoDB FIRST before registering routes
     console.log("🔄 Connecting to MongoDB...");
     const maskedUri = process.env.MONGODB_URI!.replace(/:[^:@]+@/, ":****@");
     console.log("📍 Connection:", maskedUri);
     await connectToDatabase();
-    console.log("✅ MongoDB connected");
-    dbConnected = true;
 
-    // Test route
+    // Test route to verify server is working
     app.get("/test", (req, res) => {
       res.json({
-        message: "Server is working!",
+        message: "Backend server is working!",
         timestamp: new Date().toISOString(),
-        routes: {
-          test: "/test",
-          api: "/api/enquiries",
-          frontend: "/"
-        }
+        environment: process.env.NODE_ENV || "development"
       });
     });
 
-    // Register API routes
-    await registerRoutes(null as any, app);
+    // Health check for Render
+    app.get("/health", (req, res) => {
+      res.json({ status: "ok", timestamp: new Date().toISOString() });
+    });
+
+    // Now register routes (which may query the database)
+    await registerRoutes(httpServer, app);
     console.log("✅ API routes registered");
 
-    // Serve static files in production
+    // importantly only setup vite in development and after
+    // setting up all the other routes so the catch-all route
+    // doesn't interfere with the other routes
     if (process.env.NODE_ENV === "production") {
       serveStatic(app);
     } else {
       console.log("🔄 Setting up Vite dev server for frontend...");
       const { setupVite } = await import("./vite");
-      await setupVite(null as any, app);
+      await setupVite(httpServer, app);
       console.log("✅ Vite dev server configured");
     }
 
@@ -128,48 +127,27 @@ async function initializeApp() {
       res.status(status).json({ message });
     });
 
-  } catch (error) {
-    console.error("❌ Failed to initialize app:", error);
-    throw error;
-  }
-}
-
-// For Vercel serverless
-if (process.env.VERCEL) {
-  console.log("🚀 Running in Vercel serverless mode");
-  // Initialize on first request
-  app.use(async (req, res, next) => {
-    if (!dbConnected) {
-      await initializeApp();
-    }
-    next();
-  });
-}
-
-// For local development
-if (!process.env.VERCEL && process.env.NODE_ENV !== "test") {
-  import("http").then(({ createServer }) => {
-    const httpServer = createServer(app);
-    
-    initializeApp().then(() => {
-      const port = parseInt(process.env.PORT || "5000", 10);
-      httpServer.listen(port, () => {
-        console.log("");
-        console.log("=".repeat(50));
-        console.log("✅ SERVER STARTED SUCCESSFULLY!");
-        console.log("=".repeat(50));
-        console.log(`🌐 Frontend: http://localhost:${port}`);
-        console.log(`🔌 API:      http://localhost:${port}/api`);
-        console.log(`🧪 Test:     http://localhost:${port}/test`);
-        console.log("=".repeat(50));
-        console.log("");
-      });
-    }).catch((error) => {
-      console.error("❌ Failed to start server:", error);
-      process.exit(1);
+    // ALWAYS serve the app on the port specified in the environment variable PORT
+    // Other ports are firewalled. Default to 5000 if not specified.
+    // this serves both the API and the client.
+    // It is the only port that is not firewalled.
+    const port = parseInt(process.env.PORT || "5000", 10);
+    httpServer.listen(port, "0.0.0.0", () => {
+      console.log("");
+      console.log("=".repeat(50));
+      console.log("✅ SERVER STARTED SUCCESSFULLY!");
+      console.log("=".repeat(50));
+      console.log(`🌐 Server: http://localhost:${port}`);
+      console.log(`🔌 API:    http://localhost:${port}/api`);
+      console.log(`🧪 Test:   http://localhost:${port}/test`);
+      console.log(`💚 Health: http://localhost:${port}/health`);
+      console.log("=".repeat(50));
+      console.log("");
     });
-  });
-}
+  } catch (error) {
+    console.error("❌ Failed to start server:", error);
+    process.exit(1);
+  }
+})();
 
-// Export for Vercel
 export default app;

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { nanoid } from 'nanoid';
+import { API_URL } from '@/lib/api';
 
 // Helper to check if user has given consent
 function hasUserConsent(): boolean {
@@ -72,7 +73,7 @@ export function useVisitorTracking() {
           userAgent: navigator.userAgent,
         };
 
-        await fetch('/api/visitor-track', {
+        await fetch(`${API_URL}/api/visitor-track`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -109,7 +110,7 @@ export async function updateVisitorDetails(details: {
     const sessionId = getSessionId();
     const { browser, os, device } = getBrowserInfo();
 
-    await fetch('/api/visitor-track', {
+    await fetch(`${API_URL}/api/visitor-track`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
