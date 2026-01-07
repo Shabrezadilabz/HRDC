@@ -3,11 +3,11 @@ import {
   insertEnquirySchema, 
   insertScholarshipSchema, 
   insertStudentExamRegisterSchema, 
-  insertVisitorSchema,
+  insertVisitorDetailsSchema,
   type Enquiry, 
   type ScholarshipRegistration,
   type StudentExamRegister,
-  type Visitor
+  type VisitorDetails
 } from './schema';
 
 export * from './schema';
@@ -84,9 +84,9 @@ export const api = {
     create: {
       method: 'POST' as const,
       path: '/api/visitor-track',
-      input: insertVisitorSchema,
+      input: insertVisitorDetailsSchema,
       responses: {
-        201: z.custom<Visitor>(),
+        201: z.custom<VisitorDetails>(),
         400: errorSchemas.validation,
       },
     },
@@ -94,7 +94,7 @@ export const api = {
       method: 'GET' as const,
       path: '/api/visitors',
       responses: {
-        200: z.array(z.custom<Visitor>()),
+        200: z.array(z.custom<VisitorDetails>()),
       },
     },
     stats: {
