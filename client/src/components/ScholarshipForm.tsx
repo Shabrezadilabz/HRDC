@@ -53,7 +53,12 @@ export function ScholarshipForm() {
                 <FormItem>
                   <FormLabel className="text-white/80">Full Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your full name" className="bg-background/50 border-white/10 text-white focus:border-primary/50" {...field} />
+                    <Input 
+                      placeholder="Enter your full name" 
+                      autoComplete="name"
+                      className="bg-background/50 border-white/10 text-white focus:border-primary/50" 
+                      {...field} 
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -92,7 +97,12 @@ export function ScholarshipForm() {
                   <FormItem>
                     <FormLabel className="text-white/80">City</FormLabel>
                     <FormControl>
-                      <Input placeholder="City" className="bg-background/50 border-white/10 text-white focus:border-primary/50" {...field} />
+                      <Input 
+                        placeholder="City" 
+                        autoComplete="address-level2"
+                        className="bg-background/50 border-white/10 text-white focus:border-primary/50" 
+                        {...field} 
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -106,7 +116,13 @@ export function ScholarshipForm() {
                   <FormItem>
                     <FormLabel className="text-white/80">Phone</FormLabel>
                     <FormControl>
-                      <Input placeholder="Mobile Number" className="bg-background/50 border-white/10 text-white focus:border-primary/50" {...field} />
+                      <Input 
+                        placeholder="Mobile Number" 
+                        type="tel"
+                        autoComplete="tel"
+                        className="bg-background/50 border-white/10 text-white focus:border-primary/50" 
+                        {...field} 
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

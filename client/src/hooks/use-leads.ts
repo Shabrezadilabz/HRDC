@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, type InsertScholarshipRegistration, type InsertEnquiry } from "@shared/routes";
 import { useToast } from "@/hooks/use-toast";
+import { getApiUrl } from "@/lib/api";
 
 // ============================================
 // SCHOLARSHIP HOOKS
@@ -10,7 +11,7 @@ export function useScholarshipRegistrations() {
   return useQuery({
     queryKey: [api.scholarship.list.path],
     queryFn: async () => {
-      const res = await fetch(api.scholarship.list.path);
+      const res = await fetch(getApiUrl(api.scholarship.list.path));
       if (!res.ok) throw new Error("Failed to fetch registrations");
       return api.scholarship.list.responses[200].parse(await res.json());
     },
@@ -23,7 +24,7 @@ export function useRegisterScholarship() {
 
   return useMutation({
     mutationFn: async (data: InsertScholarshipRegistration) => {
-      const res = await fetch(api.scholarship.create.path, {
+      const res = await fetch(getApiUrl(api.scholarship.create.path), {
         method: api.scholarship.create.method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -64,7 +65,7 @@ export function useEnquiries() {
   return useQuery({
     queryKey: [api.enquiries.list.path],
     queryFn: async () => {
-      const res = await fetch(api.enquiries.list.path);
+      const res = await fetch(getApiUrl(api.enquiries.list.path));
       if (!res.ok) throw new Error("Failed to fetch enquiries");
       return api.enquiries.list.responses[200].parse(await res.json());
     },
@@ -77,7 +78,7 @@ export function useCreateEnquiry() {
 
   return useMutation({
     mutationFn: async (data: InsertEnquiry) => {
-      const res = await fetch(api.enquiries.create.path, {
+      const res = await fetch(getApiUrl(api.enquiries.create.path), {
         method: api.enquiries.create.method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

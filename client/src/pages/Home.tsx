@@ -2,19 +2,24 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ScholarshipForm } from "@/components/ScholarshipForm";
 import { ServiceCard } from "@/components/ServiceCard";
+import { CourseModal } from "@/components/CourseModal";
+import { AchievementsCarousel } from "@/components/AchievementsCarousel";
+import { CookieConsent } from "@/components/CookieConsent";
 import { Button } from "@/components/ui/button";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ChevronDown, Timer, Trophy, Globe, Plane, GraduationCap } from "lucide-react";
+import { ChevronDown, Timer, Trophy, Globe, Plane, GraduationCap, Award, Building2, MessageCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertEnquirySchema, type InsertEnquiry } from "@shared/routes";
 import { useCreateEnquiry } from "@/hooks/use-leads";
+import { useVisitorTracking, updateVisitorDetails } from "@/hooks/use-visitor-tracking";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { CourseDetail, courses } from "@/data/courses";
 
 // Dynamic Countdown Timer Component
 const CountdownTimer = () => {
@@ -91,13 +96,45 @@ export default function Home() {
   const y1 = useTransform(scrollY, [0, 500], [0, 200]);
   const opacity = useTransform(scrollY, [0, 300], [1, 0]);
   
-  // Hero Background Carousel - Airport & Aviation Scenes
+  // Track visitor on page load
+  useVisitorTracking();
+  
+  // Course modal state
+  const [selectedCourse, setSelectedCourse] = useState<CourseDetail | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleLearnMore = (course: CourseDetail) => {
+    setSelectedCourse(course);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    // Clear selected course after animation
+    setTimeout(() => setSelectedCourse(null), 300);
+  };
+
+  // Country images mapping for Study International section
+  const getCountryImage = (country: string): string => {
+    const countryImages: Record<string, string> = {
+      'USA': 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&q=80&w=1200',
+      'UK': 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&q=80&w=1200',
+      'Canada': 'https://images.unsplash.com/photo-1517935706615-2717063c2225?auto=format&fit=crop&q=80&w=1200',
+      'Australia': 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&q=80&w=1200',
+      'Germany': 'https://images.unsplash.com/photo-1467269204594-9661b133dd2b?auto=format&fit=crop&q=80&w=1200',
+      'Russia': 'https://images.unsplash.com/photo-1513326738677-b964603b136d?auto=format&fit=crop&q=80&w=1200',
+    };
+    return countryImages[country] || 'https://images.unsplash.com/photo-1485738422979-f5c462d49f74?auto=format&fit=crop&q=80&w=1200';
+  };
+  
+  // Hero Background Carousel - Aviation Education, Scholarships, and Student Success
   const heroImages = [
-    "https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?auto=format&fit=crop&q=80&w=2000",
-    "https://images.unsplash.com/photo-1513573516-f1adf8f2f69e?auto=format&fit=crop&q=80&w=2000",
-    "https://images.unsplash.com/photo-1446776877081-d282a0f896e2?auto=format&fit=crop&q=80&w=2000",
-    "https://images.unsplash.com/photo-1569163139394-de4798aa62b5?auto=format&fit=crop&q=80&w=2000",
-    "https://images.unsplash.com/photo-1485633308149-3903a40df9f3?auto=format&fit=crop&q=80&w=2000",
+    "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=2000", // Students studying
+    "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=2000", // Group of students
+    "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=2000", // Education/classroom
+    "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&q=80&w=2000", // Aviation/airport
+    "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=2000", // Airport scene
+    "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=2000", // Students learning
   ];
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -123,13 +160,24 @@ export default function Home() {
 
   const onEnquirySubmit = (data: InsertEnquiry) => {
     enquiryMutation.mutate(data, {
-      onSuccess: () => enquiryForm.reset(),
+      onSuccess: () => {
+        enquiryForm.reset();
+        // Update visitor details with form data
+        updateVisitorDetails({
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+        });
+      },
     });
   };
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <Navbar />
+      
+      {/* Cookie Consent Banner */}
+      <CookieConsent />
       
       {/* HERO SECTION */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
@@ -147,6 +195,13 @@ export default function Home() {
             src={heroImages[currentImageIndex]} 
             alt="Hero Background" 
             className="w-full h-full object-cover"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              // Fallback to a working image
+              target.src = 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&q=80&w=2000';
+            }}
+            loading="eager"
+            key={currentImageIndex}
           />
         </motion.div>
 
@@ -158,25 +213,95 @@ export default function Home() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
             >
+              {/* Andhra Govt Collaboration Badge */}
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-gradient-to-r from-green-600/40 via-green-500/30 to-green-400/20 border-2 border-green-400/60 text-white text-sm font-bold mb-4 backdrop-blur-md shadow-xl shadow-green-500/30 hover:shadow-green-500/50 transition-all duration-300"
+              >
+                <div className="flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-green-300" />
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                  <span className="text-green-200 font-semibold">In Collaboration with</span>
+                  <span className="text-white font-extrabold text-base">ANDHRA PRADESH GOVERNMENT</span>
+                  <Award className="w-4 h-4 text-yellow-400" />
+                </div>
+              </motion.div>
+
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-primary/30 text-primary text-sm font-semibold mb-6">
                 <Trophy className="w-4 h-4" />
                 <span>#1 Aviation Academy in India</span>
               </div>
+              
               <h1 className="text-5xl md:text-7xl font-display font-bold text-white leading-tight mb-6">
                 Let Your Dreams <br />
                 <span className="text-gradient">Be Your Wings</span>
               </h1>
-              <p className="text-lg text-white/80 mb-8 max-w-xl leading-relaxed">
+              
+              <p className="text-lg text-white/80 mb-4 max-w-xl leading-relaxed">
                 Join the elite league of aviation professionals. We provide world-class training in piloting, engineering, and management to help you soar higher.
               </p>
+
+              {/* Scholarship Highlight */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="mb-8 p-4 rounded-xl bg-gradient-to-r from-primary/20 via-primary/10 to-transparent border border-primary/30 backdrop-blur-sm"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/30">
+                    <GraduationCap className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-white font-bold text-lg">Spreading Our Wings for Your Future</p>
+                    <p className="text-white/70 text-sm">Up to 100% Scholarships Available • Government Supported Programs</p>
+                  </div>
+                </div>
+              </motion.div>
               <div className="flex flex-wrap gap-4">
-                <Button size="lg" className="bg-primary hover:bg-yellow-400 text-primary-foreground font-bold h-14 px-8 rounded-xl shadow-lg shadow-primary/25">
-                  Start Your Journey
+                <Button 
+                  size="lg" 
+                  className="bg-primary hover:bg-yellow-400 text-primary-foreground font-bold h-14 px-8 rounded-xl shadow-lg shadow-primary/25"
+                  onClick={() => {
+                    document.getElementById("scholarship")?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                >
+                  Apply for Scholarship
                 </Button>
-                <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10 h-14 px-8 rounded-xl backdrop-blur-sm">
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="border-white/20 text-white hover:bg-white/10 h-14 px-8 rounded-xl backdrop-blur-sm"
+                  onClick={() => {
+                    document.getElementById("courses")?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                >
                   Explore Courses
                 </Button>
               </div>
+
+              {/* Stats/Highlights */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                className="mt-8 grid grid-cols-3 gap-4 max-w-xl"
+              >
+                <div className="text-center p-3 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10">
+                  <div className="text-3xl font-bold text-primary mb-1">100%</div>
+                  <div className="text-xs text-white/70">Scholarship Support</div>
+                </div>
+                <div className="text-center p-3 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10">
+                  <div className="text-3xl font-bold text-primary mb-1">Govt</div>
+                  <div className="text-xs text-white/70">Collaboration</div>
+                </div>
+                <div className="text-center p-3 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10">
+                  <div className="text-3xl font-bold text-primary mb-1">1000+</div>
+                  <div className="text-xs text-white/70">Students Placed</div>
+                </div>
+              </motion.div>
             </motion.div>
 
             <motion.div 
@@ -234,11 +359,17 @@ export default function Home() {
               <div className="hidden lg:block">
                  {/* Visual element for desktop scholarship section since form is in hero */}
                  <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
-                    {/* Unsplash image - Student studying/exam */}
+                    {/* Student studying for scholarship exam */}
                     <img 
-                      src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=1000" 
-                      alt="Student" 
+                      src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1200" 
+                      alt="Student studying for scholarship exam" 
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        // Fallback to a reliable scholarship/education image
+                        target.src = 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=1200';
+                      }}
+                      loading="lazy"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-8">
                       <p className="text-white font-medium italic">"The scholarship changed my life. I'm now a commercial pilot." - Rahul S.</p>
@@ -267,34 +398,20 @@ export default function Home() {
               <span className="text-primary">Aviation Core Programs</span>
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <ServiceCard 
-                title="Commercial Pilot (CPL)" 
-                description="Comprehensive ground classes and flying training to earn your Commercial Pilot License with DGCA standards."
-                icon="pilot"
-                delay={0.1}
-                image="https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?auto=format&fit=crop&q=80&w=800"
-              />
-              <ServiceCard 
-                title="BBA Aviation / Airport Management" 
-                description="A 3-year degree program combining management principles with specialized aviation industry knowledge."
-                icon="degree"
-                delay={0.2}
-                image="https://images.unsplash.com/photo-1513573516-f1adf8f2f69e?auto=format&fit=crop&q=80&w=800"
-              />
-              <ServiceCard 
-                title="Aircraft Maintenance Engineering (AME)" 
-                description="Become a licensed Aircraft Maintenance Engineer. Learn to service and repair aircraft systems."
-                icon="engineer"
-                delay={0.3}
-                image="https://images.unsplash.com/photo-1485633308149-3903a40df9f3?auto=format&fit=crop&q=80&w=800"
-              />
-              <ServiceCard 
-                title="B.E Aeronautical Engineering" 
-                description="Deep dive into the design, manufacturing, and testing of aircraft and aerospace systems."
-                icon="engineer"
-                delay={0.4}
-                image="https://images.unsplash.com/photo-1446776877081-d282a0f896e2?auto=format&fit=crop&q=80&w=800"
-              />
+              {courses
+                .filter(course => course.category === 'aviation-core')
+                .map((course, index) => (
+                  <ServiceCard 
+                    key={course.id}
+                    title={course.title}
+                    description={course.description}
+                    icon={course.id === 'cpl' ? 'pilot' : course.id.includes('eng') ? 'engineer' : 'degree'}
+                    delay={0.1 * (index + 1)}
+                    image={course.images[0]?.src}
+                    courseId={course.id}
+                    onLearnMore={handleLearnMore}
+                  />
+                ))}
             </div>
           </div>
 
@@ -304,48 +421,20 @@ export default function Home() {
               <span className="text-primary">B.Tech Engineering Programs</span>
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <ServiceCard 
-                title="CSE (Computer Science)" 
-                description="Master software development, AI, and emerging technologies shaping the aviation industry."
-                icon="degree"
-                delay={0.1}
-              />
-              <ServiceCard 
-                title="ECE (Electronics & Communication)" 
-                description="Specialize in avionics, communication systems, and electronic aircraft components."
-                icon="engineer"
-                delay={0.2}
-              />
-              <ServiceCard 
-                title="EEE (Electrical Engineering)" 
-                description="Learn power systems and electrical components critical to modern aircraft operations."
-                icon="engineer"
-                delay={0.3}
-              />
-              <ServiceCard 
-                title="Civil Engineering" 
-                description="Build expertise in airport infrastructure, runway design, and aviation facilities."
-                icon="degree"
-                delay={0.4}
-              />
-              <ServiceCard 
-                title="Mechanical Engineering" 
-                description="Understand mechanical systems essential for aircraft propulsion and structural integrity."
-                icon="engineer"
-                delay={0.5}
-              />
-              <ServiceCard 
-                title="AI & Robotics" 
-                description="Cutting-edge programs in artificial intelligence and automation for aerospace applications."
-                icon="degree"
-                delay={0.6}
-              />
-              <ServiceCard 
-                title="Data Science" 
-                description="Analytics and data-driven solutions for aviation operations and management."
-                icon="degree"
-                delay={0.7}
-              />
+              {courses
+                .filter(course => course.category === 'engineering')
+                .map((course, index) => (
+                  <ServiceCard 
+                    key={course.id}
+                    title={course.title}
+                    description={course.description}
+                    icon={course.id.includes('eng') || course.id === 'ece' || course.id === 'eee' || course.id === 'mechanical' ? 'engineer' : 'degree'}
+                    delay={0.1 * (index + 1)}
+                    image={course.images[0]?.src}
+                    courseId={course.id}
+                    onLearnMore={handleLearnMore}
+                  />
+                ))}
             </div>
           </div>
 
@@ -355,24 +444,20 @@ export default function Home() {
               <span className="text-primary">Medical & Global Education</span>
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <ServiceCard 
-                title="MBBS Abroad" 
-                description="Specialized guidance for medical aspirants to study MBBS in top universities worldwide with visa support."
-                icon="medical"
-                delay={0.1}
-              />
-              <ServiceCard 
-                title="Study Abroad Services" 
-                description="Complete guidance for USA, UK, Canada, Australia, Germany, and Russia with visa and admission support."
-                icon="global"
-                delay={0.2}
-              />
-              <ServiceCard 
-                title="Internships & OJT" 
-                description="On-the-job training and internship programs with leading aviation companies nationally and internationally."
-                icon="degree"
-                delay={0.3}
-              />
+              {courses
+                .filter(course => course.category === 'medical-global')
+                .map((course, index) => (
+                  <ServiceCard 
+                    key={course.id}
+                    title={course.title}
+                    description={course.description}
+                    icon={course.id === 'mbbs-abroad' ? 'medical' : course.id === 'study-abroad' ? 'global' : 'degree'}
+                    delay={0.1 * (index + 1)}
+                    image={course.images[0]?.src}
+                    courseId={course.id}
+                    onLearnMore={handleLearnMore}
+                  />
+                ))}
             </div>
           </div>
         </div>
@@ -386,7 +471,14 @@ export default function Home() {
               <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-2">Study Internationally</h2>
               <p className="text-muted-foreground">Gateway to global universities</p>
             </div>
-            <Button variant="outline" className="mt-4 md:mt-0 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                // Use wouter's navigation
+                window.location.href = '/study-abroad';
+              }}
+              className="mt-4 md:mt-0 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+            >
               View All Countries
             </Button>
           </div>
@@ -401,22 +493,16 @@ export default function Home() {
                 viewport={{ once: true }}
                 className="group relative aspect-[3/4] rounded-xl overflow-hidden cursor-pointer"
               >
-                {/* Placeholder images for countries - using colored gradients for abstract look if specific images not avail, 
-                    but let's try to use generic city/country vibes from Unsplash */}
                 <img 
-                  src={`https://source.unsplash.com/random/400x600?${country},landmark`} // Note: source.unsplash is deprecated but good for quick mockups. 
-                  // Better to use static URLs. I'll use a reliable fallback pattern or solid colors if needed.
-                  // Switching to specific Unsplash IDs for reliability
-                  srcSet={`
-                    ${country === 'USA' ? 'https://images.unsplash.com/photo-1485738422979-f5c462d49f74?w=400&q=80' : ''}
-                    ${country === 'UK' ? 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&q=80' : ''}
-                    ${country === 'Canada' ? 'https://images.unsplash.com/photo-1517935706615-2717063c2225?w=400&q=80' : ''}
-                    ${country === 'Australia' ? 'https://images.unsplash.com/photo-1523482580672-01e6f06378c5?w=400&q=80' : ''}
-                    ${country === 'Germany' ? 'https://images.unsplash.com/photo-1467269204594-9661b133dd2b?w=400&q=80' : ''}
-                    ${country === 'Russia' ? 'https://images.unsplash.com/photo-1513326738677-b964603b136d?w=400&q=80' : ''}
-                  `}
+                  src={getCountryImage(country)}
                   alt={country}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    // Fallback to a reliable image
+                    target.src = 'https://images.unsplash.com/photo-1485738422979-f5c462d49f74?auto=format&fit=crop&q=80&w=1200';
+                  }}
+                  loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent p-4 flex flex-col justify-end">
                   <h3 className="text-white font-bold font-display">{country}</h3>
@@ -430,6 +516,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ACHIEVEMENTS & SUCCESS STORIES CAROUSEL */}
+      <AchievementsCarousel />
+
       {/* CONTACT SECTION */}
       <section id="contact" className="py-24 relative overflow-hidden">
         {/* Decorative background element */}
@@ -437,10 +526,39 @@ export default function Home() {
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto glass rounded-3xl p-8 md:p-12 border border-white/10">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl font-display font-bold text-white mb-4">Get In Touch</h2>
-              <p className="text-muted-foreground">Have questions about our courses or admission process?</p>
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-display font-bold text-white mb-4">Get In Touch</h2>
+            <p className="text-muted-foreground mb-6">Have questions about our courses or admission process?</p>
+            
+            {/* WhatsApp Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="mb-8"
+            >
+              <a
+                href="https://wa.me/919182272317?text=Hello%20Aviation%20Research%20%26%20Development!%20I%27m%20interested%20in%20learning%20more%20about%20your%20aviation%20courses%20and%20scholarship%20opportunities.%20Could%20you%20please%20provide%20me%20with%20more%20information%3F"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white font-bold text-lg shadow-lg shadow-green-500/30 hover:shadow-green-500/50 transition-all duration-300 group"
+              >
+                <MessageCircle className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                <span>Connect on WhatsApp</span>
+                <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 text-sm">
+                  <span>📱</span>
+                  <span>9182272317</span>
+                </div>
+              </a>
+              <p className="text-white/60 text-sm mt-3">Quick response guaranteed • Available 24/7</p>
+            </motion.div>
+            
+            <div className="relative inline-block">
+              <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
+              <p className="relative text-muted-foreground">Or fill out the form below</p>
             </div>
+          </div>
 
             <Form {...enquiryForm}>
               <form onSubmit={enquiryForm.handleSubmit(onEnquirySubmit)} className="space-y-6">
@@ -452,7 +570,12 @@ export default function Home() {
                       <FormItem>
                         <FormLabel className="text-white">Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Your Name" className="bg-white/5 border-white/10 text-white" {...field} />
+                          <Input 
+                            placeholder="Your Name" 
+                            autoComplete="name"
+                            className="bg-white/5 border-white/10 text-white" 
+                            {...field} 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -465,7 +588,13 @@ export default function Home() {
                       <FormItem>
                         <FormLabel className="text-white">Phone</FormLabel>
                         <FormControl>
-                          <Input placeholder="Mobile Number" className="bg-white/5 border-white/10 text-white" {...field} />
+                          <Input 
+                            placeholder="Mobile Number" 
+                            type="tel"
+                            autoComplete="tel"
+                            className="bg-white/5 border-white/10 text-white" 
+                            {...field} 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -481,7 +610,13 @@ export default function Home() {
                       <FormItem>
                         <FormLabel className="text-white">Email</FormLabel>
                         <FormControl>
-                          <Input placeholder="Email Address" className="bg-white/5 border-white/10 text-white" {...field} />
+                          <Input 
+                            placeholder="Email Address" 
+                            type="email"
+                            autoComplete="email"
+                            className="bg-white/5 border-white/10 text-white" 
+                            {...field} 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -553,6 +688,13 @@ export default function Home() {
       </section>
 
       <Footer />
+      
+      {/* Course Modal */}
+      <CourseModal 
+        course={selectedCourse}
+        isOpen={isModalOpen}
+        onClose={closeModal}
+      />
       
       {/* Mobile Sticky Bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-lg border-t border-white/10 p-2 z-50 flex justify-between gap-1.5">

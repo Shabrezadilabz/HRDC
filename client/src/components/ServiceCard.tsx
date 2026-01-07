@@ -1,63 +1,79 @@
 import { motion } from "framer-motion";
-import { ArrowRight, Plane, Globe, BookOpen, User, Wrench } from "lucide-react";
+import { LucideIcon, Plane, GraduationCap, Briefcase, Users, Building2, Globe, Stethoscope, Cog } from "lucide-react";
+import { Button } from "./ui/button";
+import { useLocation } from "wouter";
 
 interface ServiceCardProps {
   title: string;
   description: string;
-  icon: "pilot" | "engineer" | "degree" | "global" | "medical";
-  delay?: number;
+  icon: string;
+  delay: number;
   image?: string;
+  courseId: string;
+  onLearnMore?: (courseId: string) => void;
 }
 
-const icons = {
-  pilot: Plane,
-  engineer: Wrench,
-  degree: BookOpen,
-  global: Globe,
-  medical: User,
+const iconMap: Record<string, LucideIcon> = {
+  plane: Plane,
+  degree: GraduationCap,
+  briefcase: Briefcase,
+  users: Users,
+  building: Building2,
+  globe: Globe,
+  medical: Stethoscope,
+  engineer: Cog,
 };
 
-export function ServiceCard({ title, description, icon, delay = 0, image }: ServiceCardProps) {
-  const Icon = icons[icon];
+export function ServiceCard({ 
+  title, 
+  description, 
+  icon, 
+  delay, 
+  image,
+  courseId,
+  onLearnMore 
+}: ServiceCardProps) {
+  const Icon = iconMap[icon] || GraduationCap;
+  const [, setLocation] = useLocation();
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
       viewport={{ once: true }}
-      className="group relative h-full"
+      className="glass group hover:border-primary/50 border border-white/10 rounded-xl p-6 transition-all duration-300 hover:scale-105 overflow-hidden relative"
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      <div className="glass-card relative overflow-hidden rounded-2xl h-full flex flex-col items-start border border-white/10 hover:border-primary/50 transition-colors duration-300">
-        {/* Image at top if provided */}
-        {image && (
-          <div className="w-full h-40 overflow-hidden">
-            <img 
-              src={image} 
-              alt={title}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-            />
-          </div>
-        )}
-        
-        <div className="p-8 flex flex-col items-start h-full">
-          <div className="mb-6 p-4 rounded-xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 group-hover:scale-110 transition-transform duration-300">
-            <Icon className="w-8 h-8 text-primary" />
-          </div>
-          
-          <h3 className="text-xl font-bold text-white mb-3 font-display group-hover:text-primary transition-colors">
-            {title}
-          </h3>
-          
-          <p className="text-muted-foreground mb-6 leading-relaxed flex-grow">
-            {description}
-          </p>
-
-          <div className="flex items-center text-sm font-semibold text-primary/80 group-hover:text-primary cursor-pointer transition-colors">
-            Learn more <ArrowRight className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" />
-          </div>
+      {/* Background Image */}
+      {image && (
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500">
+          <img 
+            src={image} 
+            alt={title}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+            }}
+          />
         </div>
+      )}
+
+      <div className="relative z-10">
+        <div className="flex items-center gap-4 mb-4">
+          <div className="p-3 bg-primary/20 rounded-lg group-hover:bg-primary/30 transition-colors">
+            <Icon className="w-6 h-6 text-primary" />
+          </div>
+          <h3 className="text-xl font-bold text-white font-display">{title}</h3>
+        </div>
+        <p className="text-muted-foreground mb-6 line-clamp-3">{description}</p>
+        <Button
+          onClick={() => setLocation(`/course/${courseId}`)}
+          variant="outline"
+          className="w-full border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground"
+        >
+          Learn More
+        </Button>
       </div>
     </motion.div>
   );

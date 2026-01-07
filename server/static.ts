@@ -10,7 +10,14 @@ export function serveStatic(app: Express) {
     );
   }
 
+  // Serve static files from dist/public
   app.use(express.static(distPath));
+  
+  // Serve assets from client/public/assets (for images)
+  const assetsPath = path.resolve(__dirname, "..", "client", "public", "assets");
+  if (fs.existsSync(assetsPath)) {
+    app.use("/assets", express.static(assetsPath));
+  }
 
   // fall through to index.html if the file doesn't exist
   app.use("*", (_req, res) => {
