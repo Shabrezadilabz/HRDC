@@ -1,5 +1,14 @@
 import { z } from 'zod';
-import { insertEnquirySchema, insertScholarshipSchema, type Enquiry, type ScholarshipRegistration } from './schema';
+import { 
+  insertEnquirySchema, 
+  insertScholarshipSchema, 
+  insertStudentExamRegisterSchema, 
+  insertVisitorSchema,
+  type Enquiry, 
+  type ScholarshipRegistration,
+  type StudentExamRegister,
+  type Visitor
+} from './schema';
 
 export * from './schema';
 
@@ -35,6 +44,24 @@ export const api = {
       },
     },
   },
+  studentExamRegister: {
+    create: {
+      method: 'POST' as const,
+      path: '/api/student-exam-register',
+      input: insertStudentExamRegisterSchema,
+      responses: {
+        201: z.custom<StudentExamRegister>(),
+        400: errorSchemas.validation,
+      },
+    },
+    list: {
+      method: 'GET' as const,
+      path: '/api/student-exam-register',
+      responses: {
+        200: z.array(z.custom<StudentExamRegister>()),
+      },
+    },
+  },
   enquiries: {
     create: {
       method: 'POST' as const,
@@ -50,6 +77,35 @@ export const api = {
       path: '/api/enquiries',
       responses: {
         200: z.array(z.custom<Enquiry>()),
+      },
+    },
+  },
+  visitorTrack: {
+    create: {
+      method: 'POST' as const,
+      path: '/api/visitor-track',
+      input: insertVisitorSchema,
+      responses: {
+        201: z.custom<Visitor>(),
+        400: errorSchemas.validation,
+      },
+    },
+    list: {
+      method: 'GET' as const,
+      path: '/api/visitors',
+      responses: {
+        200: z.array(z.custom<Visitor>()),
+      },
+    },
+    stats: {
+      method: 'GET' as const,
+      path: '/api/visitor-stats',
+      responses: {
+        200: z.object({
+          totalVisitors: z.number(),
+          uniqueVisitors: z.number(),
+          totalVisits: z.number(),
+        }),
       },
     },
   },
