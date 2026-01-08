@@ -1,7 +1,7 @@
 {
-  "buildCommand": "npm install && npm run build:client",
+  "buildCommand": "npm install && npx vite build --config client/vite.config.ts",
   "outputDirectory": "client/dist",
-  "installCommand": "echo 'Installing in build'",
+  "installCommand": "echo 'Build includes install'",
   "framework": null,
   "rewrites": [
     {
