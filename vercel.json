@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm install && npx vite build --config client/vite.config.ts",
+  "buildCommand": "npm install && npx vite build client",
   "outputDirectory": "client/dist",
   "installCommand": "echo 'Build includes install'",
   "framework": null,
