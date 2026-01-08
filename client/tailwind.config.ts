@@ -3,18 +3,17 @@ import type { Config } from "tailwindcss";
 export default {
   darkMode: ["class"],
   content: [
-    "./client/index.html",
-    "./client/src/**/*.{js,jsx,ts,tsx}"
+    "./index.html",
+    "./src/**/*.{js,jsx,ts,tsx}"
   ],
   theme: {
     extend: {
       borderRadius: {
-        lg: ".5625rem", /* 9px */
-        md: ".375rem", /* 6px */
-        sm: ".1875rem", /* 3px */
+        lg: ".5625rem",
+        md: ".375rem",
+        sm: ".1875rem",
       },
       colors: {
-        // Flat / base colors (regular buttons)
         background: "hsl(var(--background) / <alpha-value>)",
         foreground: "hsl(var(--foreground) / <alpha-value>)",
         border: "hsl(var(--border) / <alpha-value>)",
@@ -89,8 +88,8 @@ export default {
         sans: ["var(--font-sans)"],
         serif: ["var(--font-serif)"],
         mono: ["var(--font-mono)"],
-        display: ["var(--font-display)"], // Montserrat
-        body: ["var(--font-body)"],       // DM Sans
+        display: ["var(--font-display)"],
+        body: ["var(--font-body)"],
       },
       keyframes: {
         "accordion-down": {
@@ -110,3 +109,4 @@ export default {
   },
   plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
 } satisfies Config;
+
