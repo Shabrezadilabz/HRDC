@@ -9,6 +9,7 @@ const __dirname = dirname(__filename);
 export default defineConfig({
   plugins: [react()],
   root: ".",
+  base: "/",
   build: {
     outDir: "dist",
     emptyOutDir: true,
