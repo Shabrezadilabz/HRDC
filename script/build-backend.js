@@ -6,7 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const rootDir = join(__dirname, '..');
 
-console.log('🔨 Building backend...');
+console.log('🔨 Building backend for production...');
 
 await build({
   entryPoints: [join(rootDir, 'server/index.ts')],
@@ -25,8 +25,18 @@ await build({
     'zod',
     'zod-validation-error',
     'express-session',
-    'memorystore'
+    'memorystore',
+    // External ALL dev-only packages
+    'vite',
+    'nanoid',
+    '@vitejs/plugin-react',
+    '@replit/vite-plugin-cartographer',
+    '@replit/vite-plugin-dev-banner',
+    '@replit/vite-plugin-runtime-error-modal'
   ],
+  define: {
+    'process.env.NODE_ENV': '"production"'
+  },
   minify: false,
   sourcemap: true,
 });

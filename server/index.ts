@@ -4,7 +4,6 @@ import "./config";
 import express, { type Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { registerRoutes } from "./routes";
-import { serveStatic } from "./static";
 import { createServer } from "http";
 import { connectToDatabase } from "./db";
 import path from "path";
@@ -35,11 +34,19 @@ app.use(cors({
   credentials: true,
 }));
 
-// Serve assets in development too
-if (process.env.NODE_ENV === "development") {
+// Serve assets in production (only if dist/public exists)
+if (process.env.NODE_ENV === "production") {
+  const publicPath = path.resolve(process.cwd(), "dist", "public");
+  if (fs.existsSync(publicPath)) {
+    app.use(express.static(publicPath));
+    console.log("✅ Serving static files from:", publicPath);
+  }
+} else {
+  // In development, serve client/public/assets
   const assetsPath = path.resolve(process.cwd(), "client", "public", "assets");
   if (fs.existsSync(assetsPath)) {
     app.use("/assets", express.static(assetsPath));
+    console.log("✅ Serving assets from:", assetsPath);
   }
 }
 
@@ -106,16 +113,14 @@ app.use((req, res, next) => {
     await registerRoutes(httpServer, app);
     console.log("✅ API routes registered");
 
-    // importantly only setup vite in development and after
-    // setting up all the other routes so the catch-all route
-    // doesn't interfere with the other routes
-    if (process.env.NODE_ENV === "production") {
-      serveStatic(app);
-    } else {
+    // Setup Vite ONLY in development
+    if (process.env.NODE_ENV !== "production") {
       console.log("🔄 Setting up Vite dev server for frontend...");
       const { setupVite } = await import("./vite");
       await setupVite(httpServer, app);
       console.log("✅ Vite dev server configured");
+    } else {
+      console.log("✅ Running in production mode (API only)");
     }
 
     // Error handler must be AFTER all routes
@@ -128,19 +133,18 @@ app.use((req, res, next) => {
     });
 
     // ALWAYS serve the app on the port specified in the environment variable PORT
-    // Other ports are firewalled. Default to 5000 if not specified.
-    // this serves both the API and the client.
-    // It is the only port that is not firewalled.
-    const port = parseInt(process.env.PORT || "5000", 10);
+    // Default to 3000 for backend (was 5000 for full-stack)
+    const port = parseInt(process.env.PORT || "3000", 10);
     httpServer.listen(port, "0.0.0.0", () => {
       console.log("");
       console.log("=".repeat(50));
-      console.log("✅ SERVER STARTED SUCCESSFULLY!");
+      console.log("✅ BACKEND API SERVER STARTED!");
       console.log("=".repeat(50));
       console.log(`🌐 Server: http://localhost:${port}`);
       console.log(`🔌 API:    http://localhost:${port}/api`);
       console.log(`🧪 Test:   http://localhost:${port}/test`);
       console.log(`💚 Health: http://localhost:${port}/health`);
+      console.log(`📦 Mode:   ${process.env.NODE_ENV || "development"}`);
       console.log("=".repeat(50));
       console.log("");
     });
