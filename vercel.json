@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm install && npx vite build client",
+  "buildCommand": "npm install && bash -c 'cd client && npm install && npx vite build'",
   "outputDirectory": "client/dist",
   "installCommand": "echo 'Build includes install'",
   "framework": null,
