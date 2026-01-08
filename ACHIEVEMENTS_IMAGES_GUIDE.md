@@ -27,3 +27,4 @@ Please add the following images from your collection to `client/public/assets/` 
 If you don't add the images, the carousel will use placeholder images from Unsplash.
 
 
+

@@ -63,3 +63,4 @@ Once all 11 images are in the `client/public/assets/` folder, the carousel will 
 The carousel is already configured and ready. It just needs the image files in the correct location.
 
 
+

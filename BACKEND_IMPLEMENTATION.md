@@ -126,3 +126,4 @@ To view collected data, you can:
 All tracking is server-side and doesn't use third-party cookies. Data is stored securely in your MongoDB database.
 
 
+
